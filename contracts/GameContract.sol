@@ -28,6 +28,8 @@ contract GameContract is EncryptionContract {
         uint256 indexed _amountWon
     );
 
+    event RewardClaimed(address indexed player, uint256 amount);
+
     constructor(
         uint256 _rewardPercent,
         uint256 _rewardAmount,
@@ -62,22 +64,24 @@ contract GameContract is EncryptionContract {
         string[5] memory _wordArray
     ) public returns (bool) {
         if (block.timestamp == 0) {
-            revert Error__NotPlayed();
+            revert Error__NotPlayed("You have not started the game yet.");
         }
         if (block.timestamp >= timeOfPlay[msg.sender] + 1 days) {
-            revert Error__AlreadyPlayed();
+            revert Error__AlreadyPlayed("You have already played in the last 24 hours.");
         }
         uint userStake = s_stakingContract.getStaked(msg.sender);
         uint _payAmount = (REWARD_PERCENTAGE * userStake) / 100;
         s_stakingToken.transfer(msg.sender, _payAmount);
+        emit PlayedGame(msg.sender, isWon, _payAmount + REWARD_AMOUNT);
 
         bool isWon = isCorrect(_encryptedWordArray, _wordArray);
         //check if won
         if (isWon) {
             winners.push(msg.sender);
             s_stakingToken.transfer(msg.sender, REWARD_AMOUNT);
+            emit RewardClaimed(msg.sender, REWARD_AMOUNT);
         }
-        emit PlayedGame(msg.sender, isWon, _payAmount + REWARD_AMOUNT);
+        
     }
 
     function fetchWinners() public view returns (address[] memory) {
