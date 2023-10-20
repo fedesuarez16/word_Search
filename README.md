@@ -30,7 +30,7 @@ FetchRandomWords was successfully deployed to _______ 0x6Ea2F4B47ffFaAE5D465C5Ac
 **Randomizer Contract**[0x6Ea2F4B47ffFaAE5D465C5Ac5F081f48c9271F36](https://explorer.testnet.aurora.dev/address/0x6Ea2F4B47ffFaAE5D465C5Ac5F081f48c9271F36)
 
 ## What's next for WordSearch
-we hope to keep building after the hackathon by adding multiple games to the build
+I hope to keep building after the this submission by adding multiple games to the build
 
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
