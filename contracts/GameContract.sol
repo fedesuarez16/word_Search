@@ -17,17 +17,36 @@ contract GameContract is EncryptionContract {
     uint256 public immutable REWARD_PERCENTAGE;
     IStaking public immutable s_stakingContract;
 
+    /**
+     * @dev Event emitted when a player starts a game.
+     * @param player The address of the player.
+     * @param startTime The timestamp when the game started.
+     * @param codedWordArray An array of bytes32 containing the coded word provided by the player.
+     */
     event GameStarted(
         address player,
         uint256 startTime,
         bytes32[5] codedWordArray
     );
+
+    /**
+     * @dev Event emitted when a player plays the game.
+     * @param player The address of the player.
+     * @param isWon A boolean indicating if the player has won the game.
+     * @param amountWon The total amount won by the player.
+     */
     event PlayedGame(
         address indexed player,
         bool indexed isWon,
         uint256 indexed _amountWon
     );
 
+
+    /**
+     * @dev Event emitted when a player claims their game reward.
+     * @param player The address of the player.
+     * @param amount The amount of the reward claimed by the player.
+     */
     event RewardClaimed(address indexed player, uint256 amount);
 
     constructor(
@@ -50,6 +69,10 @@ contract GameContract is EncryptionContract {
     //mapping that maps users time of play
     mapping(address => uint256) timeOfPlay;
 
+    /**
+     * @dev Allows a player to start a game by providing a coded word array.
+     * @param _codedWordArray An array of bytes32 containing the coded word.
+     */
     function startGame(bytes32[5] memory _codedWordArray) public {
         //update user's word
         userToCodedWordArray[msg.sender] = _codedWordArray;
@@ -59,6 +82,13 @@ contract GameContract is EncryptionContract {
         emit GameStarted(msg.sender, block.timestamp, _codedWordArray);
     }
 
+
+    /**
+     * @dev Allows a player to submit their game results for verification and rewards.
+     * @param _encryptedWordArray An array of bytes32 containing the encrypted word.
+     * @param _wordArray An array of strings representing the player's guess.
+     * @return bool True if the player has won the game, false otherwise.
+     */
     function playedGame(
         bytes32[5] memory _encryptedWordArray,
         string[5] memory _wordArray
@@ -84,10 +114,19 @@ contract GameContract is EncryptionContract {
         
     }
 
+    /**
+     * @dev Retrieves the list of players who have won the game.
+     * @return address[] An array of addresses representing the winners.
+     */
     function fetchWinners() public view returns (address[] memory) {
         return winners;
     }
 
+    /**
+     * @dev Retrieves the game information of the calling player.
+     * @return bytes32[5] An array of bytes32 containing the player's coded word.
+     * @return uint256 The time when the player started the game.
+     */
     function fetchPlayerInfo()
         public
         view

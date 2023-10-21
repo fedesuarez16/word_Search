@@ -9,6 +9,10 @@ error Staking__TransferFailed();
 error Withdraw__TransferFailed();
 error Staking__NeedsMoreThanZero();
 
+/**
+ * @title Staking
+ * @dev A Solidity smart contract for staking and withdrawing tokens with rewards.
+ */
 contract Staking is ReentrancyGuard {
     IERC20 public s_stakingToken;
     // IGameContract public s_gameContract;
@@ -17,6 +21,10 @@ contract Staking is ReentrancyGuard {
     mapping(address => uint256) s_balances;
     uint256 public s_totalSupply;
 
+    /**
+     * @dev Throws if the specified amount is zero.
+     * @param amount The amount to check.
+     */
     modifier moreThanZero(uint256 amount) {
         if (amount == 0) {
             revert Staking__NeedsMoreThanZero();
@@ -24,6 +32,10 @@ contract Staking is ReentrancyGuard {
         _;
     }
 
+    /**
+     * @dev Constructor to initialize the Staking contract.
+     * @param stakingToken The address of the ERC20 token used for staking.
+     */
     constructor(address stakingToken) {
         s_stakingToken = IERC20(stakingToken);
         // s_gameContract = IGameContract(_gameContract);
@@ -34,6 +46,10 @@ contract Staking is ReentrancyGuard {
     event StakeWithdrawn(address indexed staker, uint256 indexed amount);
     event RewardClaimed(address indexed staker, uint256 indexed _tokenId);
 
+    /**
+     * @dev Stake tokens into the contract.
+     * @param amount The amount to stake.
+     */
     function stake(uint256 amount) external moreThanZero(amount) {
         // keep track of how much this user has staked
         // keep track of how much token we have total
@@ -54,6 +70,10 @@ contract Staking is ReentrancyGuard {
         emit Staked(msg.sender, amount);
     }
 
+    /**
+     * @dev Withdraw staked tokens.
+     * @param _amount The amount to withdraw.
+     */
     function withdrawStaked(uint _amount) external moreThanZero(_amount) {
         s_balances[msg.sender] -= _amount;
         s_totalSupply -= _amount;
@@ -65,21 +85,11 @@ contract Staking is ReentrancyGuard {
         emit StakeWithdrawn(msg.sender, _amount);
     }
 
-    // function claimReward(string memory _tokenURI) external {
-    //     //update logic to check if user won
-    //     if (s_gameContract.winners(msg.sender) == 0) {
-    //         revert Error__NotWonGame();
-    //     }
-    //     uint itemId = awardItem(msg.sender, _tokenURI);
-    //     // s_gameContract.updateWinners(msg.sender, 0);
-    //     if (itemId <= 0) {
-    //         revert Staking__TransferFailed();
-    //     }
-
-    //     emit RewardClaimed(msg.sender, itemId);
-    // }
-
-    // Getter for UI
+    /**
+     * @dev Get the amount staked by an account.
+     * @param account The address of the account.
+     * @return The amount staked by the account.
+     */
     function getStaked(address account) public view returns (uint256) {
         return s_balances[account];
     }
